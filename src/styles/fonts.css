@@ -1,0 +1,12 @@
+/*
+ * Readex Pro — the certificate font (per the certificate spec) and the website's UI font.
+ * Self-hosted so the certificate never depends on a third-party font CDN at render time.
+ * Variable weight 160–700, Arabic + Latin subset. License: SIL OFL 1.1 (ReadexPro-OFL.txt).
+ */
+@font-face {
+  font-family: 'Readex Pro';
+  src: url('../assets/fonts/ReadexPro-Variable.woff') format('woff');
+  font-weight: 160 700;
+  font-style: normal;
+  font-display: swap;
+}

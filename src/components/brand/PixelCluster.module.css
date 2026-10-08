@@ -1,0 +1,24 @@
+.cluster {
+  display: grid;
+  grid-auto-rows: var(--px);
+  grid-auto-columns: var(--px);
+  pointer-events: none;
+  /* Squares are placed in visual (left-to-right) order, like in the guide. */
+  direction: ltr;
+}
+
+.green {
+  background: var(--color-green);
+}
+
+.white {
+  background: var(--color-white);
+}
+
+.purple {
+  background: var(--color-purple);
+}
+
+.shade {
+  background: color-mix(in srgb, var(--color-white) 11%, var(--color-black));
+}

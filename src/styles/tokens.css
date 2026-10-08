@@ -1,0 +1,51 @@
+/*
+ * Design tokens — the ONLY place colours are defined.
+ * Sources:
+ *   Designer guide (دليل المصممين): black, white, #7E36E3, #54D640
+ *   Website palette:   #F3EBFD lavender, #E8FAEC mint, #FAFAFD off-white, #2B2D42 slate
+ *   Certificate spec:  #5A20B5 deep purple, #1A1624 ink
+ * Lighter/darker shades are mixed from these with color-mix(), never new hues.
+ */
+:root {
+  /* Brand */
+  --color-purple: #7e36e3;          /* البنفسجي الأساسي — headings, key UI, primary actions */
+  --color-purple-deep: #5a20b5;     /* certificate accent — hover/pressed, emphasis text */
+  --color-green: #54d640;           /* الأخضر المضيء — accents only (never body text on light bg) */
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  /* Website palette */
+  --color-lavender: #f3ebfd;        /* gradient edges, frame borders, secondary surfaces */
+  --color-mint: #e8faec;            /* soft glow, positive surfaces */
+  --color-off-white: #fafafd;       /* page base */
+  --color-slate: #2b2d42;           /* body text */
+  --color-ink: #1a1624;             /* strongest text */
+
+  /* Derived */
+  --color-text: var(--color-slate);
+  --color-text-muted: color-mix(in srgb, var(--color-slate) 68%, var(--color-off-white));
+  --color-border: color-mix(in srgb, var(--color-purple) 16%, var(--color-white));
+  --color-border-strong: color-mix(in srgb, var(--color-purple) 38%, var(--color-white));
+  --color-focus-ring: color-mix(in srgb, var(--color-purple) 35%, transparent);
+  --color-on-dark-muted: color-mix(in srgb, var(--color-white) 72%, var(--color-black));
+  --color-green-ink: color-mix(in srgb, var(--color-green) 45%, var(--color-slate)); /* readable green on mint */
+
+  /* Type */
+  --font-body: 'Readex Pro', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  --font-wordmark: 'Satoshi', 'Readex Pro', system-ui, sans-serif;
+
+  /* Shape & depth */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-card: 0 1px 2px rgb(43 45 66 / 0.06), 0 12px 32px -12px rgb(126 54 227 / 0.18);
+  --shadow-raised: 0 18px 40px -18px rgb(126 54 227 / 0.35);
+
+  /* Layout */
+  --page-max: 1120px;
+  --content-max: 760px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --tap-min: 48px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

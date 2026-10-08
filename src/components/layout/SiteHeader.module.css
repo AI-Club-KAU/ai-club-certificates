@@ -1,0 +1,29 @@
+.header {
+  background: var(--color-black);
+  padding-top: env(safe-area-inset-top);
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 18px var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fcit {
+  height: 60px;
+  width: auto;
+}
+
+@media (max-width: 480px) {
+  .inner {
+    padding-block: 14px;
+  }
+
+  .fcit {
+    height: 46px;
+  }
+}

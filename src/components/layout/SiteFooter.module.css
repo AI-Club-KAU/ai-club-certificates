@@ -1,0 +1,97 @@
+.footer {
+  margin-top: auto;
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+}
+
+.band {
+  background: var(--color-black);
+  color: var(--color-white);
+  padding-block: 28px;
+}
+
+.club {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mark {
+  width: 34px;
+  height: auto;
+}
+
+.clubName {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.faculty {
+  font-size: 13.5px;
+  color: var(--color-on-dark-muted);
+}
+
+.social {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  color: var(--color-black);
+  text-decoration: none;
+}
+
+a.icon:hover {
+  background: var(--color-lavender);
+  color: var(--color-purple-deep);
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  margin-inline: 8px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.handle {
+  font-family: var(--font-wordmark);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.strip {
+  background: var(--color-white);
+  padding-block: 16px calc(16px + env(safe-area-inset-bottom));
+}
+
+.hashtag {
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--color-black);
+}
+
+.copy {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}

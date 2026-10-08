@@ -1,0 +1,93 @@
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.step {
+  min-width: 0;
+  border-bottom: 3px solid var(--color-lavender);
+  color: var(--color-text-muted);
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 0 0 12px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+}
+
+button.link {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.link:hover .label {
+  color: var(--color-purple-deep);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.marker {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--color-lavender);
+  color: var(--color-purple-deep);
+}
+
+.label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.current {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-purple);
+}
+
+.current .marker {
+  background: var(--color-purple);
+  color: var(--color-white);
+}
+
+.done {
+  color: var(--color-text);
+  border-bottom-color: var(--color-green);
+}
+
+.done .marker {
+  background: var(--color-green);
+  color: var(--color-black);
+}
+
+@media (max-width: 560px) {
+  .link {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12.5px;
+  }
+
+  .label {
+    white-space: normal;
+    line-height: 1.35;
+  }
+}

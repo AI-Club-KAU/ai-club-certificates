@@ -1,0 +1,66 @@
+.main {
+  flex: 1;
+  /* Website palette: lavender and mint glow at the page edges over the off-white base. */
+  background:
+    radial-gradient(60% 40% at 100% 55%, var(--color-lavender) 0%, transparent 70%),
+    radial-gradient(55% 40% at 0% 95%, var(--color-mint) 0%, transparent 70%),
+    var(--color-off-white);
+  padding-bottom: clamp(48px, 8vw, 96px);
+}
+
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+  /* Card overlaps the black hero. */
+  margin-top: calc(-1 * clamp(84px, 11vw, 118px));
+  position: relative;
+  z-index: 2;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: clamp(20px, 4.5vw, 40px);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  border: 1px solid var(--color-lavender);
+  box-shadow: var(--shadow-card);
+  scroll-margin-top: 12px;
+}
+
+.panelHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heading {
+  font-size: clamp(22px, 3.4vw, 28px);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-purple);
+}
+
+.heading:focus {
+  outline: none;
+}
+
+.description {
+  color: var(--color-text-muted);
+  font-size: 15.5px;
+}
+
+@media (max-width: 480px) {
+  .card {
+    gap: 22px;
+    border-radius: var(--radius-md);
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

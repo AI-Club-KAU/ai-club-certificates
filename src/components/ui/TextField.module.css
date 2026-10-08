@@ -1,0 +1,73 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-ink);
+}
+
+.hint {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+  margin-top: -2px;
+}
+
+.input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  /* 16px+ prevents iOS from zooming into the field. */
+  font-size: 17px;
+  color: var(--color-ink);
+  transition:
+    border-color 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+}
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--color-slate) 40%, var(--color-white));
+}
+
+.input:hover {
+  border-color: var(--color-border-strong);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-purple);
+  box-shadow: 0 0 0 4px var(--color-focus-ring);
+}
+
+/* Email is LTR content inside an RTL page. */
+.input[dir='ltr'] {
+  text-align: left;
+}
+.input[dir='ltr']::placeholder {
+  text-align: left;
+}
+
+/*
+ * The approved palette has no red, so errors use the deep brand purple with a
+ * thicker border, a tinted field and an alert icon — clearly distinct from focus.
+ */
+.hasError .input {
+  border-color: var(--color-purple-deep);
+  border-width: 2px;
+  background: var(--color-lavender);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-purple-deep);
+}
