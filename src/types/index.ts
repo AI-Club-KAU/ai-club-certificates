@@ -24,7 +24,8 @@ export interface EventMatch {
 
 export interface ParticipantQuery {
   fullName: string;
-  email: string;
+  /** الرقم الجامعي */
+  studentId: string;
 }
 
 /** Event categories that have their own certificate sentence. */

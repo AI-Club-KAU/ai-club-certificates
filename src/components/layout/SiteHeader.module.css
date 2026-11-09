@@ -9,21 +9,13 @@
   padding: 18px var(--gutter);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* The page is right-to-left, so flex-end keeps the club logo on the left. */
+  justify-content: flex-end;
   gap: 16px;
-}
-
-.fcit {
-  height: 60px;
-  width: auto;
 }
 
 @media (max-width: 480px) {
   .inner {
     padding-block: 14px;
-  }
-
-  .fcit {
-    height: 46px;
   }
 }

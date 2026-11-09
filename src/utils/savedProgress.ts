@@ -18,7 +18,8 @@ export interface SavedProgress {
   savedAt: number;
 }
 
-const STORAGE_KEY = 'aiClubCertificateProgress';
+// v2: the form uses the student ID (older saved progress had an email and is ignored).
+const STORAGE_KEY = 'aiClubCertificateProgress.v2';
 /** Older progress is ignored (e.g. the tab was left open overnight). */
 const MAX_AGE_MS = 12 * 60 * 60 * 1000;
 
@@ -29,6 +30,7 @@ export function loadProgress(): SavedProgress | null {
     const saved = JSON.parse(raw) as SavedProgress;
     if (!saved || typeof saved !== 'object' || Date.now() - saved.savedAt > MAX_AGE_MS) return null;
     if (!['verify', 'events', 'certificate'].includes(saved.page) || !Array.isArray(saved.matches)) return null;
+    if (typeof saved.draft?.studentId !== 'string') return null;
     return saved;
   } catch {
     return null;

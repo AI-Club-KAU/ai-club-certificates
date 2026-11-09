@@ -5,7 +5,8 @@ import { renderCertificate } from '../certificate/renderCertificate';
 import { AttendanceApiError } from '../services/apiError';
 import { findCertificates } from '../services/attendanceApi';
 import type { EventMatch, ParticipantQuery } from '../types';
-import { cleanName, normalizeEmail } from '../utils/normalize';
+import { cleanName } from '../utils/normalize';
+import { normalizeStudentId } from '../utils/studentId';
 import { clearProgress, loadProgress, saveProgress } from '../utils/savedProgress';
 
 /**
@@ -30,11 +31,11 @@ export interface GeneratedCertificate {
   png: Blob;
 }
 
-const EMPTY_QUERY: ParticipantQuery = { fullName: '', email: '' };
+const EMPTY_QUERY: ParticipantQuery = { fullName: '', studentId: '' };
 const HISTORY_KEY = 'aiClubPage';
 
 function sameQuery(a: ParticipantQuery, b: ParticipantQuery): boolean {
-  return cleanName(a.fullName) === cleanName(b.fullName) && normalizeEmail(a.email) === normalizeEmail(b.email);
+  return cleanName(a.fullName) === cleanName(b.fullName) && normalizeStudentId(a.studentId) === normalizeStudentId(b.studentId);
 }
 
 export function useCertificateFlow() {
@@ -113,7 +114,7 @@ export function useCertificateFlow() {
 
   // Save progress whenever it changes, so leaving and coming back resumes here.
   useEffect(() => {
-    if (page === 'verify' && !draft.fullName && !draft.email && !searchedQuery) {
+    if (page === 'verify' && !draft.fullName && !draft.studentId && !searchedQuery) {
       clearProgress();
       return;
     }

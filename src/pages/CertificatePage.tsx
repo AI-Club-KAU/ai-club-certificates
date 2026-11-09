@@ -13,7 +13,7 @@ import styles from './CertificatePage.module.css';
 
 const ERROR_MESSAGES: Record<ErrorKind, { title: string; text: string }> = {
   network: { title: 'تعذّر الاتصال بالخادم.', text: 'تحقق من اتصالك بالإنترنت ثم حاول مرة أخرى.' },
-  'invalid-input': { title: 'البيانات المدخلة غير صالحة.', text: 'راجع الاسم والبريد الإلكتروني ثم حاول مرة أخرى.' },
+  'invalid-input': { title: 'البيانات المدخلة غير صالحة.', text: 'راجع الاسم والرقم الجامعي ثم حاول مرة أخرى.' },
   'not-configured': { title: 'خدمة الشهادات غير متاحة حاليًا.', text: 'يرجى المحاولة لاحقًا أو التواصل مع فريق النادي.' },
   server: { title: 'حدث خطأ غير متوقع أثناء التحقق.', text: 'حاول مرة أخرى بعد قليل.' },
   unknown: { title: 'حدث خطأ غير متوقع أثناء التحقق.', text: 'حاول مرة أخرى بعد قليل.' },
@@ -82,7 +82,7 @@ export function CertificatePage() {
 
                 {flow.verifyStatus === 'not-found' && (
                   <Notice tone="info" icon="search" title="لم يتم العثور على سجل حضور مطابق للبيانات المدخلة.">
-                    تأكد من إدخال الاسم والإيميل المستخدمين عند حضور الفعالية.
+                    تأكد من إدخال اسمك ورقمك الجامعي كما سُجّلا عند حضور الفعالية.
                   </Notice>
                 )}
 
@@ -144,7 +144,7 @@ function getHeading(page: FlowPage, status: VerifyStatus, isGenerating: boolean)
     case 'verify':
       if (status === 'not-found') return { title: 'لا يوجد سجل حضور', text: 'عدّل البيانات ثم أعد التحقق.' };
       if (status === 'error') return { title: 'تعذّر إكمال التحقق' };
-      return { title: 'تحقّق من حضورك', text: 'أدخل الاسم والبريد الإلكتروني المستخدمين عند حضور الفعالية.' };
+      return { title: 'تحقّق من حضورك', text: 'أدخل اسمك ورقمك الجامعي المسجّلين عند حضور الفعالية.' };
     case 'events':
       return { title: 'شهاداتك المتاحة' };
     case 'certificate':

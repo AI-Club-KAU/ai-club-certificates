@@ -8,7 +8,6 @@ export const site = {
   socialHandle: 'FCIT_AICLUB',
   social: {
     x: 'https://x.com/FCIT_AICLUB',
-    /** Paste the club's LinkedIn page URL here; the icon is shown without a link while empty. */
-    linkedin: '',
+    linkedin: 'https://www.linkedin.com/company/ai-club-kau/',
   },
 } as const;

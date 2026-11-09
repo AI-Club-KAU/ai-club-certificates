@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import type { ParticipantQuery } from '../../types';
-import { hasErrors, validateParticipant, type FieldErrors } from '../../utils/validation';
+import { normalizeStudentId, validateStudentId } from '../../utils/studentId';
+import { validateParticipant } from '../../utils/validation';
 import { Button } from '../ui/Button';
 import { TextField } from '../ui/TextField';
 import styles from './VerifyForm.module.css';
@@ -13,19 +14,34 @@ interface VerifyFormProps {
   onSubmit: (query: ParticipantQuery) => void;
 }
 
+interface FormErrors {
+  fullName?: string;
+  studentId?: string;
+}
+
+/** A valid placeholder so validateParticipant() checks only the name (its rules stay unchanged). */
+const NAME_ONLY_CHECK = 'name@example.com';
+
+function validate(values: ParticipantQuery): FormErrors {
+  return {
+    fullName: validateParticipant(values.fullName, NAME_ONLY_CHECK).fullName || undefined,
+    studentId: validateStudentId(values.studentId) || undefined,
+  };
+}
+
 export function VerifyForm({ values, isSubmitting, onChange, onSubmit }: VerifyFormProps) {
-  const [errors, setErrors] = useState<FieldErrors>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const found = validateParticipant(values.fullName, values.email);
+    const found = validate(values);
     setErrors(found);
-    if (hasErrors(found)) {
+    if (found.fullName || found.studentId) {
       const firstInvalid = event.currentTarget.querySelector<HTMLInputElement>('[aria-invalid="true"]');
       firstInvalid?.focus();
       return;
     }
-    onSubmit(values);
+    onSubmit({ ...values, studentId: normalizeStudentId(values.studentId) });
   }
 
   return (
@@ -45,22 +61,21 @@ export function VerifyForm({ values, isSubmitting, onChange, onSubmit }: VerifyF
         }}
       />
       <TextField
-        label="البريد الإلكتروني"
-        hint="البريد الذي استخدمته عند الحضور."
-        name="email"
-        type="email"
+        label="الرقم الجامعي"
+        hint="رقمك الجامعي المسجّل عند الحضور."
+        name="studentId"
+        type="text"
         dir="ltr"
-        inputMode="email"
-        autoComplete="email"
-        autoCapitalize="none"
+        inputMode="numeric"
+        autoComplete="off"
         spellCheck={false}
-        placeholder="name@example.com"
-        value={values.email}
-        error={errors.email}
+        placeholder="مثال: 2210045"
+        value={values.studentId}
+        error={errors.studentId}
         disabled={isSubmitting}
         onChange={(e) => {
-          onChange({ ...values, email: e.target.value });
-          if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+          onChange({ ...values, studentId: e.target.value });
+          if (errors.studentId) setErrors((prev) => ({ ...prev, studentId: undefined }));
         }}
       />
       <Button type="submit" icon="search" loading={isSubmitting} loadingLabel="جارٍ التحقق…" fullWidth>

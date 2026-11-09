@@ -1,6 +1,7 @@
 import { env } from '../config/env';
 import type { EventMatch, ParticipantQuery } from '../types';
-import { cleanName, normalizeEmail } from '../utils/normalize';
+import { cleanName } from '../utils/normalize';
+import { normalizeStudentId } from '../utils/studentId';
 import { AttendanceApiError, type ApiErrorKind } from './apiError';
 
 interface ApiSuccess {
@@ -17,10 +18,10 @@ const REQUEST_TIMEOUT_MS = 25_000;
 
 /**
  * Returns every event where the participant has an ATTENDANCE record matching
- * both name and email. An empty array means no attendance was found.
+ * the name or student ID (see MATCH_MODE in the Apps Script). An empty array means no attendance was found.
  */
 export async function findCertificates(query: ParticipantQuery): Promise<EventMatch[]> {
-  const payload = { fullName: cleanName(query.fullName), email: normalizeEmail(query.email) };
+  const payload = { fullName: cleanName(query.fullName), studentId: normalizeStudentId(query.studentId) };
 
   if (env.useMockApi) {
     // Loaded on demand so the fictional data never ships in a production build.
