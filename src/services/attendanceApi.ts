@@ -81,6 +81,8 @@ function sanitizeMatch(match: Partial<EventMatch>): EventMatch {
     delivery: String(match.delivery ?? '').trim(),
     date: typeof match.date === 'string' && match.date ? match.date : null,
     dateRaw: String(match.dateRaw ?? '').trim(),
+    endDate: typeof match.endDate === 'string' && match.endDate ? match.endDate : null,
+    days: Array.isArray(match.days) ? match.days.filter((d): d is string => typeof d === 'string' && d !== '') : [],
     participantName: String(match.participantName ?? '').trim(),
   };
 }

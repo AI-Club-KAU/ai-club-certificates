@@ -4,8 +4,8 @@
  * All people, IDs and events below are fictional.
  *
  * Try:
- *   ريم أحمد        / 1111111   → 2 events (طالبات; roles حضور, قيادة فريق)
- *   Omar Khalid     / 2222222   → 1 event  (طلاب, role تقديم, long title)
+ *   ريم أحمد        / 1111111   → 3 events (طالبات; حضور, مشاركة, and a booth: تمثيل with own days)
+ *   Omar Khalid     / 2222222   → 1 event  (طلاب, role تقديم → thanks, long title)
  *   any other input            → no attendance found
  *   any name        / 9999999   → simulated server error
  */
@@ -26,7 +26,9 @@ const MOCK_ATTENDEES: MockAttendee[] = [
     studentId: '1111111',
     events: [
       { eventId: '101', title: 'مقدمة في الذكاء الاصطناعي', type: 'ورشة', section: 'طالبات', role: 'حضور', delivery: 'عن بعد', date: '2026-10-07', dateRaw: '07-10-2026' },
-      { eventId: '102', title: 'Generative AI: من الفكرة إلى التطبيق', type: 'هاكاثون', section: 'طالبات', role: 'قيادة فريق', delivery: 'حضوري', date: '2026-09-20', dateRaw: '20-09-2026' },
+      { eventId: '102', title: 'Generative AI: من الفكرة إلى التطبيق', type: 'هاكاثون', section: 'طالبات', role: 'مشاركة', delivery: 'حضوري', date: '2026-09-20', dateRaw: '20-09-2026' },
+      // Club booth: thanks certificate with the member's own days.
+      { eventId: '104', title: 'أسبوع المطورين | DEV WEEK', type: 'فعالية', section: 'طالبات', role: 'تمثيل', delivery: '', date: '2026-11-10', dateRaw: '2026-11-10', endDate: '2026-11-12', days: ['2026-11-11', '2026-11-12'] },
     ],
   },
   {

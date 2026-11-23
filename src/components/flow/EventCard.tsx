@@ -16,7 +16,7 @@ export function EventCard({ event, selected, groupName, onSelect }: EventCardPro
   const typeLabel = getEventTypeLabel(event.type);
   const roleLabel = getRoleLabel(event.role);
   const delivery = getDeliveryText(event.delivery);
-  const date = formatDisplayDate(event.date, event.dateRaw);
+  const date = formatDisplayDate(event.date, event.dateRaw, event.endDate ?? null, event.days ?? []);
 
   return (
     <label className={`${styles.card} ${selected ? styles.selected : ''}`}>

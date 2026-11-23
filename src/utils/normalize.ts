@@ -1,6 +1,6 @@
 /**
  * Text normalisation shared by validation, type matching and file names.
- * `normalizeForMatch` mirrors `normalizeName_` in apps-script/Code.gs —
+ * `normalizeForMatch` mirrors `normalizeName_` in apps-script/code.gs —
  * keep the two in sync if you change either.
  */
 

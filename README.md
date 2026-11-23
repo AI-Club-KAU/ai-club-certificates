@@ -82,9 +82,8 @@ No other runtime dependencies. Icons are a small inline SVG set (`src/components
 ```
 ai-club-certificates/
 ├── apps-script/                 Google Apps Script API (copy into the Apps Script editor)
-│   ├── Config.gs                ← sheet layout settings: label names, ignored tabs
-│   ├── Code.gs                  doPost/doGet, layout detection, matching
-│   ├── AdminTools.gs            diagnose(), testSearch(), setupTemplateSheet()
+│   ├── code.gs                  the whole API in one file: CONFIG (sheet layout settings) at the top,
+│   │                            then doPost/doGet + matching, then diagnose()/testSearch()/setupTemplateSheet()
 │   └── appsscript.json          manifest (time zone, permissions, web-app access)
 ├── public/
 │   └── favicon.png
@@ -214,13 +213,33 @@ The value can be **to the right** of the label, **below** it (labels as a header
 | 6 | **الاسم الكامل / Full Name** | **البريد الإلكتروني / Email** |
 | 7 | … | … |
 
-All label lists live in `apps-script/Config.gs`. If your sheet uses different wording, add the wording there — no other change needed.
+All label lists live in the `CONFIG` object at the top of `apps-script/code.gs`. If your sheet uses different wording, add the wording there — no other change needed.
+
+**Only tabs whose name starts with `حضور` give certificates** (e.g. `حضور _ مقدمة في الذكاء الاصطناعي`, `حضور - Introduction to AI`), set by `CERTIFICATE_SHEET_PREFIXES`. Any other tab is never searched, even if it has names and student IDs. The events tab is not affected.
 
 **Tabs that are ignored:**
+- names that do not start with `حضور` (see above)
 - names starting with `_` (e.g. `_Event Template`, `_Notes`)
 - names listed in `IGNORED_SHEETS`
 - names containing a registration keyword (`registration`, `تسجيل`, `التسجيل`, `المسجلين`) — so a registration list can never produce a certificate
 - tabs without an attendance header row (they are simply not event tabs)
+
+### Certificate kinds, booth teams and multi-day events
+
+Each certificate is one of three kinds, chosen from the participant's role (`kind` in `src/config/roles.ts`):
+
+| Kind | Heading (purple) | Opening line | Sentence under the name |
+|---|---|---|---|
+| attendance | شهادة حضور | يشهد نادي الذكاء الاصطناعي بجامعة الملك عبدالعزيز بأن | قد حضرت ورشة عمل بعنوان |
+| participation | شهادة مشاركة | (same) | قد شاركت في مسابقة بعنوان |
+| thanks | شهادة شكر وتقدير | يتقدم نادي الذكاء الاصطناعي بجامعة الملك عبدالعزيز بخالص الشكر إلى | تقديرًا لجهودها في تمثيل النادي في فعالية بعنوان |
+
+The wording lives in `certificateKinds` and `thanksLead` in `src/config/certificate.ts`. The template image has no fixed text in the middle — all of it is drawn by the website.
+
+Optional columns:
+- **Events tab → `تاريخ النهاية`**: last day of a multi-day event → "وذلك خلال الفترة من 10 إلى 12 نوفمبر 2026".
+- **Events tab → `الدور`**: default role for everyone in that event's attendance tab (e.g. `تمثيل` for a booth team). A role in the attendance row still wins.
+- **Attendance tab → `الأيام`**: each person's own days (e.g. a Google Form checkbox question with options like `الأربعاء 11/11/2026`). Printed instead of the event date: "وذلك يومي الأربعاء والخميس الموافق 11 و12 نوفمبر 2026". Several rows of the same person are merged into one certificate. The weekday is computed from the date, not taken from the text.
 
 ## 9. How the attendance search works
 
@@ -232,7 +251,7 @@ All label lists live in `apps-script/Config.gs`. If your sheet uses different wo
    - looks for a row where **email matches AND name matches** (and, if a status column exists, the row is marked attended).
 4. It returns one entry per matching event: `eventId, title, type, section, date, dateRaw, participantName`, newest first. Nothing else from the sheet is returned.
 
-**Normalisation before comparing** (same rules in `Code.gs → normalizeName_` and `src/utils/normalize.ts`):
+**Normalisation before comparing** (same rules in `code.gs → normalizeName_` and `src/utils/normalize.ts`):
 
 - trim, collapse repeated spaces, ignore invisible direction marks;
 - emails: remove all spaces, lower-case;
@@ -249,12 +268,9 @@ The certificate prints the name **as written in the attendance sheet** (the offi
 Use a club-owned Google account that has access to the spreadsheet.
 
 1. Open the spreadsheet → **Extensions → Apps Script**. (This makes a script *bound* to the sheet — recommended.)
-2. Delete the default `Code.gs` content. Create three script files and paste the contents of:
-   - `apps-script/Config.gs`
-   - `apps-script/Code.gs`
-   - `apps-script/AdminTools.gs`
+2. Delete everything in the default script file (`Code.gs` / `الرمز.gs`) and paste the whole content of `apps-script/code.gs`.
 3. Show the manifest: **Project Settings (⚙) → "Show 'appsscript.json' manifest file in editor"**, then replace its content with `apps-script/appsscript.json`.
-4. Check the layout: choose `diagnose` in the toolbar function list → **Run**. Approve the permission prompt the first time. Open **Execution log**: every tab is listed with ✅ (searched), ⏭ (skipped) or ⚠️ (no attendance table). Fix any ⚠️ by adjusting labels in the sheet or aliases in `Config.gs`.
+4. Check the layout: choose `diagnose` in the toolbar function list → **Run**. Approve the permission prompt the first time. Open **Execution log**: every tab is listed with ✅ (searched), ⏭ (skipped) or ⚠️ (no attendance table). Fix any ⚠️ by adjusting labels in the sheet or aliases in `CONFIG` (top of `code.gs`).
 5. Optional: run `setupTemplateSheet` to create an `_Event Template` tab.
 6. Optional: put a real attendee in `testSearch()`, run it, check the log, then put the placeholders back.
 
@@ -376,7 +392,7 @@ Any static host works. Remember: **set `VITE_ATTENDANCE_API_URL` in the host's e
 | "خدمة الشهادات غير متاحة حاليًا" | `VITE_ATTENDANCE_API_URL` is empty in that build. Set it and rebuild. (Browser console shows a hint.) |
 | "تعذّر الاتصال بالخادم" | Wrong URL, the deployment was deleted, or "Who has access" is not **Anyone**. Open the URL in a private window — you should see the health-check JSON. |
 | A real attendee gets "no attendance found" | Run `diagnose`: is the tab ✅? Is the person in the *attendance* table (not registration)? Same email? Name spelled the same (letters, order)? If there is a status column, is the row marked attended? |
-| An event tab is ⚠️ in `diagnose` | No row has both a name header and an email header. Rename headers or add your wording to `ATTENDANCE_COLUMN_LABELS` in `Config.gs`, then **deploy a new version**. |
+| An event tab is ⚠️ in `diagnose` | No row has both a name header and an email header. Rename headers or add your wording to `ATTENDANCE_COLUMN_LABELS` in `CONFIG` (top of `code.gs`), then **deploy a new version**. |
 | Wrong title/date/type on the card | Run `diagnose` to see what was read. The label wording may not be in `EVENT_FIELD_LABELS`. |
 | Date shows as raw text | The cell is text in an unrecognised format. Use a real date cell or `yyyy-mm-dd`. |
 | Script changes don't take effect | You must publish a **new version** of the deployment (§11). |
@@ -402,7 +418,7 @@ Any static host works. Remember: **set `VITE_ATTENDANCE_API_URL` in the host's e
 
 These were chosen because the source files did not fully specify them. Each is easy to change.
 
-- **The spreadsheet was private when this was built**, so its exact layout could not be inspected. The script therefore **detects** the layout by label names (§8) instead of fixed cell addresses, and `diagnose()` shows what it found. If your labels differ, add them to `Config.gs`.
+- **The spreadsheet was private when this was built**, so its exact layout could not be inspected. The script therefore **detects** the layout by label names (§8) instead of fixed cell addresses, and `diagnose()` shows what it found. If your labels differ, add them to `CONFIG` at the top of `code.gs`.
 - **"الشطر" not "الفرع".** The certificate spec says the gender comes from "الفرع"; per the project requirements this is the **الشطر** field everywhere (UI, data model, Apps Script).
 - **Certificate name spelling** comes from the attendance sheet, not from what the student typed.
 - **Unknown event type** → "فعالية" sentence. **Empty/unknown الشطر** → masculine form (`fallbackGender`).

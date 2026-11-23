@@ -1,10 +1,47 @@
 import templateUrl from '../assets/certificate/certificate-template.png';
-import type { EventTypeKey, Gender } from '../types';
+import type { CertificateKind, EventTypeKey, Gender } from '../types';
 
 /**
- * Everything about the certificate in one place.
- * Values come from the official spec "مواصفات قالب شهادة نادي الذكاء الاصطناعي" (latest version):
- * template 3200×2262 px, four centred RTL text fields (centre x = 1600), max width 2512 px, Readex Pro.
+ * ===== CERTIFICATE WORDING — edit the printed text here =====
+ *
+ * Every certificate is one of three kinds, chosen from the participant's role
+ * (see `kind` in src/config/roles.ts):
+ *
+ *   attendance     شهادة حضور         يشهد ... بأن  <name>  قد حضرت ورشة عمل بعنوان
+ *   participation  شهادة مشاركة       يشهد ... بأن  <name>  قد شاركت في مسابقة بعنوان
+ *   thanks         شهادة شكر وتقدير   يتقدم ... بخالص الشكر إلى  <name>  تقديرًا لجهودها في تنظيم ورشة عمل بعنوان
+ *
+ * `heading` is printed at the top (purple), `opening` above the name.
+ */
+export const certificateKinds: Record<CertificateKind, { heading: string; opening: string }> = {
+  attendance: {
+    heading: 'شهادة حضور',
+    opening: 'يشهد نادي الذكاء الاصطناعي بجامعة الملك عبدالعزيز بأن',
+  },
+  participation: {
+    heading: 'شهادة مشاركة',
+    opening: 'يشهد نادي الذكاء الاصطناعي بجامعة الملك عبدالعزيز بأن',
+  },
+  thanks: {
+    heading: 'شهادة شكر وتقدير',
+    opening: 'يتقدم نادي الذكاء الاصطناعي بجامعة الملك عبدالعزيز بخالص الشكر إلى',
+  },
+};
+
+/**
+ * Start of the sentence under the name on a thanks certificate, by الشطر:
+ *   "تقديرًا لجهودها في" + the role's `thanks` words + event type + "بعنوان".
+ */
+export const thanksLead: Record<Gender, string> = {
+  male: 'تقديرًا لجهوده في',
+  female: 'تقديرًا لجهودها في',
+};
+
+/**
+ * Everything about the certificate layout in one place.
+ * Base values come from the official spec "مواصفات قالب شهادة نادي الذكاء الاصطناعي":
+ * template 3200×2262 px, centred RTL text fields (centre x = 1600), max width 2512 px, Readex Pro.
+ * The template image has NO fixed text in the middle: heading and opening are drawn here.
  */
 export const certificateConfig = {
   templateUrl,
@@ -20,11 +57,15 @@ export const certificateConfig = {
   colors: {
     text: '#1a1624',
     title: '#2f8f22',
+    /** The club purple (same as the "AIClub" logo text). */
+    heading: '#5a20b5',
   },
 
   /** `y` is the vertical CENTRE of the text, in template pixels. */
   fields: {
-    name: { y: 940, size: 108, minSize: 72, weight: 700 },
+    heading: { y: 590, size: 112, minSize: 80, weight: 700 },
+    opening: { y: 758, size: 60, minSize: 44, weight: 500 },
+    name:{ y: 940, size: 108, minSize: 72, weight: 700 },
     sentence: { y: 1134, size: 60, weight: 400 },
     /** One line; shrinks to minSize, and only wraps if it still does not fit. */
     title: { y: 1270, size: 80, minSize: 52, weight: 600, lineHeight: 1.35 },
@@ -52,6 +93,7 @@ export const eventTypeNouns: Record<EventTypeKey, string> = {
   hackathon: 'هاكاثون',
   meetup: 'لقاء',
   panel: 'جلسة حوارية',
+  exhibition: 'معرض',
 };
 
 /**
@@ -77,6 +119,7 @@ export const defaultRoleByEventType: Record<EventTypeKey, string> = {
   hackathon: 'participation',
   meetup: 'attendance',
   panel: 'attendance',
+  exhibition: 'attendance',
 };
 
 /** Arabic label shown on the website's event cards. */
@@ -87,6 +130,7 @@ export const eventTypeLabels: Record<EventTypeKey, string> = {
   hackathon: 'هاكاثون',
   meetup: 'لقاء',
   panel: 'جلسة حوارية',
+  exhibition: 'معرض',
 };
 
 /**
@@ -101,6 +145,7 @@ export const eventTypeAliases: Record<EventTypeKey, string[]> = {
   hackathon: ['hackathon', 'هاكاثون', 'هكاثون'],
   meetup: ['meetup', 'meeting', 'lecture', 'talk', 'لقاء', 'محاضرة'],
   panel: ['panel', 'panel discussion', 'discussion', 'جلسة حوارية', 'جلسة نقاش'],
+  exhibition: ['exhibition', 'expo', 'fair', 'معرض', 'معارض'],
 };
 
 /** Used when the sheet's event type is empty or not recognised. */

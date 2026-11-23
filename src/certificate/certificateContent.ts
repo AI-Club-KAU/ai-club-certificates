@@ -1,4 +1,5 @@
 import {
+  certificateKinds,
   defaultRoleByEventType,
   deliveryPhrases,
   eventTypeAliases,
@@ -7,9 +8,10 @@ import {
   fallbackEventType,
   fallbackGender,
   sectionGenderKeywords,
+  thanksLead,
 } from '../config/certificate';
 import { roles, type RoleDefinition } from '../config/roles';
-import type { CertificateContent, EventMatch, EventTypeKey, Gender } from '../types';
+import type { CertificateContent, CertificateKind, EventMatch, EventTypeKey, Gender } from '../types';
 import { formatCertificateDateLine } from '../utils/date';
 import { cleanName, normalizeForMatch } from '../utils/normalize';
 
@@ -58,33 +60,64 @@ export function getDeliveryText(rawDelivery: string): string {
 }
 
 /**
- * "قد" + verb (by الشطر) + words after the verb + event-type noun + طريقة التنفيذ + "بعنوان".
- * e.g. طالبات + مشاركة + ورشة + عن بعد → "قد شاركت في ورشة عمل عن بُعد بعنوان".
+ * The role used for the certificate: the sheet's role, or — when it is empty or unknown —
+ * the default for the event type (attendance, or participation for competitions/hackathons).
+ */
+export function effectiveRole(rawRole: string, rawType: string): RoleDefinition {
+  const type = resolveEventType(rawType) ?? fallbackEventType;
+  const known = resolveRole(rawRole);
+  const role = known ?? roles.find((r) => r.key === defaultRoleByEventType[type]) ?? roles[0];
+  if (rawRole.trim() && !known) {
+    console.warn(`[AI Club] Unknown role "${rawRole}" — using "${role.labels[0]}". Add it to src/config/roles.ts.`);
+  }
+  return role;
+}
+
+/** Which certificate the participant gets: حضور / مشاركة / شكر وتقدير. */
+export function getCertificateKind(rawRole: string, rawType: string): CertificateKind {
+  return effectiveRole(rawRole, rawType).kind;
+}
+
+/** "words" + noun, where words ending in "لـ" attach to the noun: "لـ" + "ورشة عمل" → "لورشة عمل". */
+function joinBeforeNoun(words: string, noun: string): string {
+  const w = words.trim();
+  return w.endsWith('ـ') ? `${w.slice(0, -1)}${noun}` : [w, noun].filter(Boolean).join(' ');
+}
+
+/**
+ * The sentence under the name.
+ *   attendance / participation: "قد" + verb (by الشطر) + words after the verb + type + delivery + "بعنوان"
+ *     e.g. طالبات + مشاركة + ورشة + عن بعد → "قد شاركت في ورشة عمل عن بُعد بعنوان"
+ *   thanks: "تقديرًا لجهوده/لجهودها في" + the role's thanks words + type + delivery + "بعنوان"
+ *     e.g. طالبات + تمثيل + فعالية → "تقديرًا لجهودها في تمثيل النادي في فعالية بعنوان"
  */
 export function buildSentence(rawRole: string, rawType: string, section: string, rawDelivery = ''): string {
   const type = resolveEventType(rawType) ?? fallbackEventType;
-  const role =
-    resolveRole(rawRole) ?? roles.find((r) => r.key === defaultRoleByEventType[type]) ?? roles[0];
-  if (rawRole.trim() && !resolveRole(rawRole)) {
-    console.warn(`[AI Club] Unknown role "${rawRole}" — using "${role.labels[0]}". Add it to src/config/roles.ts.`);
-  }
-
-  const verb = resolveGender(section) === 'female' ? role.female : role.male;
+  const role = effectiveRole(rawRole, rawType);
+  const gender = resolveGender(section);
   const noun = eventTypeNouns[type];
-  const after = role.after.trim();
-  // "لـ" attaches to the noun: "خطّطت لورشة عمل".
-  const object = after.endsWith('ـ') ? `${after.slice(0, -1)}${noun}` : [after, noun].filter(Boolean).join(' ');
   const delivery = getDeliveryText(rawDelivery);
+
+  if (role.kind === 'thanks') {
+    const object = joinBeforeNoun(role.thanks ?? role.labels[0], noun);
+    return `${thanksLead[gender]} ${[object, delivery].filter(Boolean).join(' ')} بعنوان`;
+  }
+  const verb = gender === 'female' ? role.female : role.male;
+  const object = joinBeforeNoun(role.after, noun);
   return `قد ${verb} ${[object, delivery].filter(Boolean).join(' ')} بعنوان`;
 }
 
-/** Builds the four dynamic certificate fields for one participant and event. */
+/** Builds the dynamic certificate fields for one participant and event. */
 export function buildCertificateContent(match: EventMatch, typedName: string): CertificateContent {
+  const kind = getCertificateKind(match.role, match.type);
   return {
+    kind,
+    heading: certificateKinds[kind].heading,
+    opening: certificateKinds[kind].opening,
     // The attendance record's spelling is the official one; the typed name is only a fallback.
     name: cleanName(match.participantName || typedName),
     sentence: buildSentence(match.role, match.type, match.section, match.delivery),
     title: cleanName(match.title),
-    dateLine: formatCertificateDateLine(match.date, match.dateRaw),
+    dateLine: formatCertificateDateLine(match.date, match.dateRaw, match.endDate ?? null, match.days ?? []),
   };
 }

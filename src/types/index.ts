@@ -18,6 +18,13 @@ export interface EventMatch {
   date: string | null;
   /** The date as written in the sheet; used for display when `date` is null. */
   dateRaw: string;
+  /** Last day of a multi-day event (ISO), or null. Optional: older API versions omit it. */
+  endDate?: string | null;
+  /**
+   * The participant's own days (ISO, sorted), e.g. the booth days they stood.
+   * Printed instead of the event date when not empty. Optional: older API versions omit it.
+   */
+  days?: string[];
   /** The participant's name as recorded in the attendance sheet. */
   participantName: string;
 }
@@ -29,13 +36,21 @@ export interface ParticipantQuery {
 }
 
 /** Event categories that have their own certificate sentence. */
-export type EventTypeKey = 'workshop' | 'event' | 'competition' | 'hackathon' | 'meetup' | 'panel';
+export type EventTypeKey = 'workshop' | 'event' | 'competition' | 'hackathon' | 'meetup' | 'panel' | 'exhibition';
 
 /** Grammatical gender used in the certificate sentence, derived from الشطر. */
 export type Gender = 'male' | 'female';
 
-/** The four dynamic text fields printed on the certificate. */
+/** The three kinds of certificate: attendance, participation, thanks (organising / club work). */
+export type CertificateKind = 'attendance' | 'participation' | 'thanks';
+
+/** The dynamic text fields printed on the certificate. */
 export interface CertificateContent {
+  kind: CertificateKind;
+  /** "شهادة حضور" / "شهادة مشاركة" / "شهادة شكر وتقدير" */
+  heading: string;
+  /** "يشهد نادي الذكاء الاصطناعي بجامعة الملك عبدالعزيز بأن" … */
+  opening: string;
   name: string;
   sentence: string;
   title: string;

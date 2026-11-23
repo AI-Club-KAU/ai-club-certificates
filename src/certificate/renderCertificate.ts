@@ -24,7 +24,7 @@ function loadTemplate(): Promise<HTMLImageElement> {
  * Each weight is requested with text containing both Arabic and Latin characters.
  */
 async function ensureFonts(content: CertificateContent): Promise<void> {
-  const sample = `${content.name} ${content.sentence} ${content.title} ${content.dateLine} أبجد ABC 123`;
+  const sample = `${content.heading} ${content.opening} ${content.name} ${content.sentence} ${content.title} ${content.dateLine} أبجد ABC 123`;
   const weights = new Set(Object.values(cfg.fields).map((field) => field.weight));
   await Promise.all([...weights].map((w) => document.fonts.load(`${w} 64px "${cfg.fontFamily}"`, sample)));
   await document.fonts.ready;
@@ -77,6 +77,8 @@ export async function renderCertificate(content: CertificateContent): Promise<HT
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(template, 0, 0, cfg.width, cfg.height);
 
+  drawFittedLine(ctx, content.heading, cfg.fields.heading, cfg.colors.heading);
+  drawFittedLine(ctx, content.opening, cfg.fields.opening, cfg.colors.text);
   drawFittedLine(ctx, content.name, cfg.fields.name, cfg.colors.text);
   drawFittedLine(ctx, content.sentence, cfg.fields.sentence, cfg.colors.text);
   drawTitle(ctx, content.title);
